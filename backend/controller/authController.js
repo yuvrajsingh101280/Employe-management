@@ -1,6 +1,9 @@
 
 import User from "../model/User.js"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import dotenv from "dotenv"
+dotenv.config()
 const login = async (req, res) => {
 
     try {
@@ -10,7 +13,7 @@ const login = async (req, res) => {
         const user = await User.findOne({ email })
         if (!user) {
 
-            res.status(400).json({ success: false, error: "user not found" })
+            return res.status(400).json({ success: false, error: "user not found" })
         }
         // here the password is mathched with the password we pass and the password of the user 
 
@@ -18,13 +21,17 @@ const login = async (req, res) => {
 
         if (!isMatch) {
 
-            res.status(400).json({ success: false, error: "Wrong password" })
+            return res.status(400).json({ success: false, error: "Wrong password" })
 
         }
 
+        // jswt(payload,)
+        const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_KEY, { expiresIn: "10d" })
+        res.status(208).json({ success: true, token, user: { _id: user.id, name: user.name, role: user.role } })
 
     } catch (error) {
         console.log(error.message)
+        res.status(500).json({ success: false, error: "Server error" });
     }
 
 

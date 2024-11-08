@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import gsap from "gsap";
 import axios from "axios"; // Don't forget to import axios for API calls
+import toast from "react-hot-toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Login = () => {
   // States
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [error, setError] = useState(null);
   // Functions
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,9 +21,19 @@ const Login = () => {
         "http://localhost:5000/api/auth/login",
         { email, password }
       );
-      console.log(response);
+      // console.log(response.data);
+      if (response.data.success) {
+        toast.success("Loggin successfull");
+        setEmail("");
+        setPassword("");
+      }
       // navigate or handle success response
     } catch (error) {
+      if (error.response && !error.response.data.success) {
+        setError(error.response.data.error);
+      } else {
+        setError("server Error");
+      }
       console.error(error);
     }
   };
@@ -64,6 +75,12 @@ const Login = () => {
           <div className="text-2xl text-dark-blue font-extrabold mt-4 p-4">
             <h2>Login</h2>
           </div>
+
+          {error && (
+            <p className="text-red-900 font-bold text-lg animate-blink ">
+              {error}
+            </p>
+          )}
           <div className="form flex flex-col p-5 items-start h-full w-full">
             <form action="" onSubmit={handleSubmit}>
               {/* Email Field */}

@@ -9,7 +9,7 @@ import {
 } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-
+import { Toaster } from "react-hot-toast";
 const router = createBrowserRouter([
   { path: "/", element: <Navigate to="/admin-dashboard" /> },
   {
@@ -25,5 +25,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <RouterProvider router={router} />
+    <Toaster />
   </StrictMode>
 );
